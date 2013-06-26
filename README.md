@@ -38,19 +38,24 @@ are equivalent to
 FAQ's
 -----
 
-**Why was this plugin developed?**
+====Why was this plugin developed?
+
 I got tired of having the WordPress admin panel be cluttered up with tons of menu items and dashboard widgets that were unnecessary to the type of site that I was setting up. For example, I would setup a pages-only site, but I still had the posts menu in the administration panel. This kind of stuff just makes it more confusing for website editors who aren't very familiar with WordPress. I also despise plugins that would add extra meta boxes on the WordPress Dashboard, confusing my end users. So I developed this plugin to let me remove those boxes and menu links that were out of place.
 
-**When I try to remove the Dashboard menu link, I get PHP notices. Why?**
+====When I try to remove the Dashboard menu link, I get PHP notices. Why?
+
 These notices will only appear when WordPress Debug mode is turned on. Just turn off debug mode to get rid of them.
 
-**I'm trying to remove a menu/submenu/dashboard widget, but it's not working. Why?**
+====I'm trying to remove a menu/submenu/dashboard widget, but it's not working. Why?
+
 The plugin might be using a hidden element in the title of the thing you're trying to remove, and thus this plugin won't match the name correctly to remove it. Instead, try removing the menu/submenu items by their linked URL, and remove dashboard widgets by their id (see the Usage section above for details and the following FAQs for how find the URLs/IDs).
 
 If, after doing that, it's still not working, post about it in this plugin's discussion forum and I'll try to help you.
 
-**How do I find the URL of a menu/submenu item?**
+====How do I find the URL of a menu/submenu item?
+
 If you want to remove an item by its URL rather than by its name, click on its link and note the URL of the page that you're now on. The URL that you want is the portion immediately following the "/wp-admin/" in the page URL.
 
-**How do I find the ID of a dashboard box?**
+====How do I find the ID of a dashboard box?
+
 This can be slightly tricky to non-technical users. In most modern browsers, right-click the title of the box and select "Inspect Element". When the developer console opens, you'll see a list of elements with the title element highlighted. Find the <div> element with a class of "postbox" that is an ancestor of the currently selected element. The value in its id attrite is the ID of the dashboard box.
