@@ -1,54 +1,68 @@
 <?php
 /*
-Plugin Name: Simplify WordPress Admin
-Plugin URI: https://github.com/johnellmore/wp-remove-admin-menu-links
-Description: Allows easy removal of admin menu pages and subpages, dashboard widgets, and meta boxes.
+Plugin Name: Simplify Admin Panel
+Plugin URI: https://github.com/johnellmore/wp-simplify-admin-panel
+Description: Allows easy removal of menu links, submenu links, and dashboard widgets from the WordPress Admin Panel.
 Author: John Ellmore
 Author URI: http://johnellmore.com
-*/
 
-//define('RAML_REMOVE_THESE_MENUS', 'posts, media, pages, comments, appearance, plugins, users, tools, settings');
-//define('RAML_REMOVE_THESE_SUBMENUS', 'Tools|Available Tools, users|all users, Add New');
-//define('RAML_REMOVE_THESE_DASHBOARD_BOXES', '');
 
-/* 
 ===========================
-        HOW TO USE
+           USAGE
 ===========================
 
-1. Install the plugin like you would normally.
-2. Activate it.
-3. Open up wp-config in a text editor.
-4. Specify which menu links you'd like removed (if any):
+To use this plugin, install it activate it like you would any other plugin. Then open up your wp-config.php file. Right above the line that says `That's all, stop editing! Happy blogging.` put in lines like the following:
 
-define('RAML_REMOVE_THESE_MENUS', 'posts, media, pages, comments, appearance, plugins, users, tools, settings');
-define('RAML_REMOVE_THESE_SUBMENUS', 'edit.php,');
+	define('SAP_REMOVE_THESE_MENUS', 'Dashboard, Posts, Media, Pages, Comments, Appearance, plugins, users, tools, settings');
+	define('SAP_REMOVE_THESE_SUBMENUS', 'Tools|Available Tools, users|all users, Add New');
+	define('SAP_REMOVE_THESE_DASHBOARD_BOXES', 'Right Now, Recent Comments, Incoming Links, Plugins, quickpress, recent drafts, wordpress blog, other wordpress news');
+
+Change the values in the comma-separated list to match the exact menu links, submenu links, and dashboard boxes that you'd like to remove. Note that the list is not case-sensitive, and spacing around the commas is ignored.
+
+If you don't need some of the functionality, you can just omit that line entirely. For instance, if you don't need to remove any menu links, just remove the `define('SAP_REMOVE_THESE_SUBMENUS', ... )` line.
+
+You can also remove menu and submenu items by their URL, and dashboard boxes by their ID. For example, these lines:
+
+	define('SAP_REMOVE_THESE_MENUS', 'Pages, Tools');
+	define('SAP_REMOVE_THESE_SUBMENUS', 'Plugins|Editor, Posts|Categories');
+	define('SAP_REMOVE_THESE_DASHBOARD_BOXES', 'Recent Comments, Plugins');
+
+are equivalent to
+
+	define('SAP_REMOVE_THESE_MENUS', 'edit.php?post_type=page, tools.php');
+	define('SAP_REMOVE_THESE_SUBMENUS', 'plugin-editor.php, edit-tags.php?taxonomy=category');
+	define('SAP_REMOVE_THESE_DASHBOARD_BOXES', 'dashboard_recent_comments, dashboard_plugins');
+
+For more information, please see the README.md file in this directory.
 
 */
 
-class RemoveAdminMenuLinks {
+class SimplifyAdminPanel {
 	private static $menuFixes = array(
 		'plugins' => 'plugins.php',
 		'comments' => 'edit-comments.php'
 	);
 	
 	private static $dashFixes = array(
-		'recent comments' => 'dashboard_recent_comments'
+		'recent comments' => 'dashboard_recent_comments',
+		'incoming links' => 'dashboard_incoming_links',
+		'wordpress blog' => 'dashboard_primary',
+		'other wordpress news' => 'dashboard_secondary'
 	);
 	
 	public function __construct() {
 		if (!is_admin()) return;
-		if (defined('RAML_REMOVE_THESE_MENUS'))
+		if (defined('SAP_REMOVE_THESE_MENUS'))
 			add_action('admin_menu', array(&$this, 'removeMenuItems'), 9999);
-		if (defined('RAML_REMOVE_THESE_SUBMENUS'))
+		if (defined('SAP_REMOVE_THESE_SUBMENUS'))
 			add_action('admin_menu', array(&$this, 'removeSubmenuItems'), 9999);
-		if (defined('RAML_REMOVE_THESE_DASHBOARD_BOXES'))
+		if (defined('SAP_REMOVE_THESE_DASHBOARD_BOXES'))
 			add_action('wp_dashboard_setup', array(&$this, 'removeDashboardWidgets'), 999);
 	}
 	
 	public function removeMenuItems() {
 		global $menu;
-		$toRemove = explode(',', RAML_REMOVE_THESE_MENUS);
+		$toRemove = explode(',', SAP_REMOVE_THESE_MENUS);
 		foreach ($toRemove as $r) {
 			$menuIndex = $this->findMenuIndex($r);
 			if ($menuIndex) unset($menu[$menuIndex]);
@@ -57,7 +71,7 @@ class RemoveAdminMenuLinks {
 	
 	public function removeSubmenuItems() {
 		global $submenu;
-		$toRemove = explode(',', RAML_REMOVE_THESE_SUBMENUS);
+		$toRemove = explode(',', SAP_REMOVE_THESE_SUBMENUS);
 		foreach ($toRemove as $r) {
 			$r = explode('|', $r);
 			if (count($r) > 1) {
@@ -119,7 +133,7 @@ class RemoveAdminMenuLinks {
 		global $wp_meta_boxes;
 		
 		// parse searches and simplify
-		$toRemove = explode(',', RAML_REMOVE_THESE_DASHBOARD_BOXES);
+		$toRemove = explode(',', SAP_REMOVE_THESE_DASHBOARD_BOXES);
 		foreach ($toRemove as $i => &$r) {
 			$r = strtolower(trim($r));
 			if (empty($r)) unset($toRemove[$i]);
@@ -142,4 +156,4 @@ class RemoveAdminMenuLinks {
 		
 	}
 }
-new RemoveAdminMenuLinks;
+new SimplifyAdminPanel;
