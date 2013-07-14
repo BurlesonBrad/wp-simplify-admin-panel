@@ -3,6 +3,7 @@
 Plugin Name: Simplify Admin Panel
 Plugin URI: https://github.com/johnellmore/wp-simplify-admin-panel
 Description: Allows easy removal of menu links, submenu links, and dashboard widgets from the WordPress Admin Panel.
+Version: 1.0
 Author: John Ellmore
 Author URI: http://johnellmore.com
 
